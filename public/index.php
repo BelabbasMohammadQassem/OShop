@@ -50,6 +50,7 @@ $router->map(
     'main-home'
 );
 
+
 // Liste des catégories
 $router->map(
     'GET',
@@ -61,6 +62,8 @@ $router->map(
     'category-list'
 );
 
+
+
 // Affichage du form d'ajout de catégorie
 $router->map(
     'GET',
@@ -71,6 +74,17 @@ $router->map(
     ],
     'category-add'
 );
+// Réception des données du form d'ajout de catégorie
+$router->map(
+    'POST', //! attention, le form envoie les données avec une requête POST
+    '/category/add', // l'URL
+    [
+        'method' => 'addPost', //! une méthode différente dans le contrôleur, dans laquelle on va réceptionner les données du form (avec $_POST) et ajouter la catégorie à la BDD.
+        'controller' => '\App\Controllers\CategoryController'
+    ],
+    'category-add'
+);
+
 
 // Affichage du form de modification de catégorie
 $router->map(
@@ -78,6 +92,17 @@ $router->map(
     '/category/update/[i:id]', // l'URL
     [
         'method' => 'update',
+        'controller' => '\App\Controllers\CategoryController'
+    ],
+    'category-update'
+);
+
+// Affichage du form de modification de catégorie
+$router->map(
+    'POST',
+    '/category/update/[i:id]', // l'URL
+    [
+        'method' => 'updatePost',
         'controller' => '\App\Controllers\CategoryController'
     ],
     'category-update'
@@ -94,12 +119,25 @@ $router->map(
     'product-list'
 );
 
+
+
 // Affichage du form d'ajout de produit
 $router->map(
     'GET',
     '/product/add', // l'URL
     [
         'method' => 'add',
+        'controller' => '\App\Controllers\ProductController'
+    ],
+    'product-add'
+);
+
+// Affichage du form d'ajout de produit
+$router->map(
+    'POST',
+    '/product/add', // l'URL
+    [
+        'method' => 'addPost',
         'controller' => '\App\Controllers\ProductController'
     ],
     'product-add'

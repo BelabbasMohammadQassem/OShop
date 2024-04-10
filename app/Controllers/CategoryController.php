@@ -41,5 +41,33 @@ class CategoryController extends CoreController
         $this->show('category/update', [
             'category' => $category
         ]);
+       
     }
+
+    public function addpost() {
+    
+    $name = filter_input(INPUT_POST, 'name');
+    $subtitle = filter_input(INPUT_POST, 'subtitle');
+    $picture = filter_input(INPUT_POST, 'picture');
+     dump($_POST);
+      
+        $categoriePostModel = new Category();
+
+     $categoriePostModel->setName ($name);
+     $categoriePostModel->setSubtitle ($subtitle);
+     $categoriePostModel->setPicture ($picture);
+
+     dump($categoriePostModel);
+
+    }
+
+  
+
+
+
+    public function uptdatePost(){
+        $this->show('Product/Add');
+    }
+    
+   
 }

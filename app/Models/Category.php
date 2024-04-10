@@ -168,4 +168,8 @@ class Category extends CoreModel
 
         return $categories;
     }
+
+    public function findAlladdPost(){
+
+    }
 }

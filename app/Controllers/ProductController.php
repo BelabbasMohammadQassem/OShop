@@ -15,10 +15,12 @@ class ProductController extends CoreController
         $this->show('product/list', [
             'products' => $products
         ]);
+        $this->show('product/listPost');
     }
 
     public function add()
     {
         $this->show('product/add');
+        $this->show('product/addPost');
     }
 }
