@@ -50,6 +50,60 @@ $router->map(
     'main-home'
 );
 
+// Liste des catégories
+$router->map(
+    'GET',
+    '/category/list', // l'URL
+    [
+        'method' => 'list',
+        'controller' => '\App\Controllers\CategoryController'
+    ],
+    'category-list'
+);
+
+// Affichage du form d'ajout de catégorie
+$router->map(
+    'GET',
+    '/category/add', // l'URL
+    [
+        'method' => 'add',
+        'controller' => '\App\Controllers\CategoryController'
+    ],
+    'category-add'
+);
+
+// Affichage du form de modification de catégorie
+$router->map(
+    'GET',
+    '/category/update/[i:id]', // l'URL
+    [
+        'method' => 'update',
+        'controller' => '\App\Controllers\CategoryController'
+    ],
+    'category-update'
+);
+
+// Liste des produits
+$router->map(
+    'GET',
+    '/product/list', // l'URL
+    [
+        'method' => 'list',
+        'controller' => '\App\Controllers\ProductController'
+    ],
+    'product-list'
+);
+
+// Affichage du form d'ajout de produit
+$router->map(
+    'GET',
+    '/product/add', // l'URL
+    [
+        'method' => 'add',
+        'controller' => '\App\Controllers\ProductController'
+    ],
+    'product-add'
+);
 
 /* -------------
 --- DISPATCH ---
@@ -57,6 +111,8 @@ $router->map(
 
 // On demande à AltoRouter de trouver une route qui correspond à l'URL courante
 $match = $router->match();
+
+//dd($match);
 
 // Ensuite, pour dispatcher le code dans la bonne méthode, du bon Controller
 // On délègue à une librairie externe : https://packagist.org/packages/benoclock/alto-dispatcher

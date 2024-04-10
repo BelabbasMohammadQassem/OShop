@@ -99,7 +99,7 @@ class Category extends CoreModel
      * @param int $categoryId ID de la catégorie
      * @return Category
      */
-    public function find($categoryId)
+    public static function find($categoryId)
     {
         // se connecter à la BDD
         $pdo = Database::getPDO();
@@ -119,13 +119,30 @@ class Category extends CoreModel
 
     /**
      * Méthode permettant de récupérer tous les enregistrements de la table category
+     * findAll() est une méthode STATIQUE, ça veut dire qu'on peut l'appeler SANS devoir instancier d'objet
+     * les méthodes STATIQUES sont des méthodes liées à la classe, et pas à un objet spécifique !
      *
      * @return Category[]
      */
-    public function findAll()
+    public static function findAll()
     {
         $pdo = Database::getPDO();
         $sql = 'SELECT * FROM `category`';
+        $pdoStatement = $pdo->query($sql);
+        $results = $pdoStatement->fetchAll(PDO::FETCH_CLASS, 'App\Models\Category');
+
+        return $results;
+    }
+
+    /**
+     * Méthode permettant de récupérer les 3 premiers enregistrements de la table category
+     *
+     * @return Category[]
+     */
+    public static function findFirstThree()
+    {
+        $pdo = Database::getPDO();
+        $sql = 'SELECT * FROM `category` LIMIT 3';
         $pdoStatement = $pdo->query($sql);
         $results = $pdoStatement->fetchAll(PDO::FETCH_CLASS, 'App\Models\Category');
 
@@ -137,7 +154,7 @@ class Category extends CoreModel
      *
      * @return Category[]
      */
-    public function findAllHomepage()
+    public static function findAllHomepage()
     {
         $pdo = Database::getPDO();
         $sql = '

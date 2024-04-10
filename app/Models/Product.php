@@ -55,7 +55,7 @@ class Product extends CoreModel
      * @param int $productId ID du produit
      * @return Product
      */
-    public function find($productId)
+    public static function find($productId)
     {
         // récupérer un objet PDO = connexion à la BDD
         $pdo = Database::getPDO();
@@ -83,10 +83,25 @@ class Product extends CoreModel
      *
      * @return Product[]
      */
-    public function findAll()
+    public static function findAll()
     {
         $pdo = Database::getPDO();
         $sql = 'SELECT * FROM `product`';
+        $pdoStatement = $pdo->query($sql);
+        $results = $pdoStatement->fetchAll(PDO::FETCH_CLASS, 'App\Models\Product');
+
+        return $results;
+    }
+
+    /**
+     * Méthode permettant de récupérer les 3 premiers enregistrements de la table product
+     *
+     * @return Product[]
+     */
+    public static function findFirstThree()
+    {
+        $pdo = Database::getPDO();
+        $sql = 'SELECT * FROM `product` LIMIT 3';
         $pdoStatement = $pdo->query($sql);
         $results = $pdoStatement->fetchAll(PDO::FETCH_CLASS, 'App\Models\Product');
 
