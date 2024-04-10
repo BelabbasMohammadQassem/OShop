@@ -169,7 +169,14 @@ class Category extends CoreModel
         return $categories;
     }
 
-    public function findAlladdPost(){
+    public function findAllAddPost(){
+        $pdo = Database::getPDO();
 
+        $sql = '
+            INSERT INTO *
+            FROM category
+            WHERE home_order > 0
+            ORDER BY home_order ASC
+        ';
     }
 }

@@ -23,4 +23,19 @@ class ProductController extends CoreController
         $this->show('product/add');
         $this->show('product/addPost');
     }
+
+    public function uptdatePost(){
+
+        $name = filter_input(INPUT_POST, 'name');
+        $description = filter_input(INPUT_POST, 'description');
+        $picture = filter_input(INPUT_POST, 'picture');
+        $price = filter_input(INPUT_POST, 'price');
+
+        $productPostModel = new Product();
+
+        $productPostModel->setName ($name);
+        $productPostModel->setDescription ($description);
+        $productPostModel->setPicture ($picture);
+        $productPostModel->setPrice ($price);
+    }
 }
