@@ -287,4 +287,19 @@ class Product extends CoreModel
     {
         $this->type_id = $type_id;
     }
+
+    public function insert(){
+        $pdo = Database::getPDO();
+
+        $sql = '
+            INSERT INTO category (name, description, picture, price, rate, status, created_at, updated_at, brand_id, category_id, type_id)
+            VALUES '('$this->name').('$this->subtitle').('$this->picture').('$this->home_order').('$this-> created_at').('$this->updated_at')
+           
+        ;
+        $pdoStatement = $pdo->exec($sql);
+
+        $categoriesPost = $pdoStatement->fetchAll(PDO::FETCH_CLASS, 'App\Models\Category');
+
+        return $categoriesPost;
+    }
 }

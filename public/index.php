@@ -82,7 +82,7 @@ $router->map(
         'method' => 'addPost', //! une méthode différente dans le contrôleur, dans laquelle on va réceptionner les données du form (avec $_POST) et ajouter la catégorie à la BDD.
         'controller' => '\App\Controllers\CategoryController'
     ],
-    'category-add'
+    'category-add-post'
 );
 
 
@@ -105,7 +105,7 @@ $router->map(
         'method' => 'updatePost',
         'controller' => '\App\Controllers\CategoryController'
     ],
-    'category-update'
+    'category-update-post'
 );
 
 // Liste des produits
@@ -140,7 +140,7 @@ $router->map(
         'method' => 'addPost',
         'controller' => '\App\Controllers\ProductController'
     ],
-    'product-add'
+    'product-add-post'
 );
 
 /* -------------

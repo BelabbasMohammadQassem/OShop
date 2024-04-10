@@ -169,14 +169,18 @@ class Category extends CoreModel
         return $categories;
     }
 
-    public function findAllAddPost(){
+    public function insert(){
         $pdo = Database::getPDO();
 
         $sql = '
-            INSERT INTO *
-            FROM category
-            WHERE home_order > 0
-            ORDER BY home_order ASC
-        ';
+            INSERT INTO category (name, subtitle, picture, home_order, created_at, updated_at)
+            VALUES '('$this->name').('$this->subtitle').('$this->picture').('$this->home_order').('$this-> created_at').('$this->updated_at')
+           
+        ;
+        $pdoStatement = $pdo->exec($sql);
+
+        $categoriesPost = $pdoStatement->fetchAll(PDO::FETCH_CLASS, 'App\Models\Category');
+
+        return $categoriesPost;
     }
 }
