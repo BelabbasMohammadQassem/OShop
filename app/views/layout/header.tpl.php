@@ -14,7 +14,7 @@
         And getting Font Awesome 4.7 (free)
         To get HTML code icons : https://fontawesome.com/v4.7.0/icons/
     -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css <?php $router->generate('category-list') ?>"
         integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 
     <!-- We can still have our own CSS file -->
