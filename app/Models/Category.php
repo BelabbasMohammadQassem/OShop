@@ -168,4 +168,81 @@ class Category extends CoreModel
 
         return $categories;
     }
+
+    /**
+     * Méthode permettant d'ajouter un enregistrement dans la table category
+     * L'objet courant doit contenir toutes les données à ajouter : 1 propriété => 1 colonne dans la table
+     *
+     * @return bool
+     */
+    public function insert()
+    {
+        // Récupération de l'objet PDO représentant la connexion à la DB
+        $pdo = Database::getPDO();
+
+        // Ecriture de la requête INSERT INTO
+        $sql = "
+            INSERT INTO `category` (name, subtitle, picture) 
+            VALUES ('$this->name', '$this->subtitle', '$this->picture')
+        ";
+
+        //! ATTENTION, la requête ci-dessus est vulnérable aux injections SQL ...
+        //* pour s'en prémunir, on doit utiliser des REQUÊTES PRÉPARÉES
+
+        // on écrit la requête
+        $sql = "INSERT INTO `category` (name, subtitle, picture) 
+                VALUES (:name, :subtitle, :picture)";
+
+        // on prépare la requête
+        $stmt = $pdo->prepare($sql);
+
+        // on "bind" (associe) nos paramètres
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':subtitle', $this->subtitle);
+        $stmt->bindParam(':picture', $this->picture);
+
+        // on lance la requête avec execute()
+        // qui renvoit true si tout s'est bien passé, false sinon !
+        if ($stmt->execute()) {
+            // Alors on récupère l'id auto-incrémenté généré par MySQL
+            $this->id = $pdo->lastInsertId();
+
+            // On retourne VRAI car l'ajout a parfaitement fonctionné
+            return true;
+            // => l'interpréteur PHP sort de cette fonction car on a retourné une donnée
+        }
+
+        // Si on arrive ici, c'est que quelque chose n'a pas bien fonctionné => FAUX
+        return false;
+    }
+
+
+    public function updateCategoryPost(){
+        // Récupération de l'objet PDO représentant la connexion à la DB
+        $pdo = Database::getPDO();
+    // on écrit la requête
+        $sql = "UPDATE `category` (name, subtitle, picture) 
+                SET (:name, :subtitle, :picture)
+                WHERE 'id' = :id";
+        // on prépare la requête
+        $updateStmt = $pdo->prepare($sql);
+         // on "bind" (associe) nos paramètres
+         $updateStmt->bindParam(':name', $this->name);
+         $updateStmt->bindParam(':subtitle', $this->subtitle);
+         $updateStmt->bindParam(':picture', $this->picture);
+         
+
+        // on lance la requête avec execute()
+        // qui renvoit true si tout s'est bien passé, false sinon !
+        if ($updateStmt->execute()) {
+            // Alors on récupère l'id auto-incrémenté généré par MySQL
+            $this->id = $pdo->lastInsertId();
+
+            // On retourne VRAI car l'ajout a parfaitement fonctionné
+            return true;
+            // => l'interpréteur PHP sort de cette fonction car on a retourné une donnée
+        }
+    }
+
+
 }

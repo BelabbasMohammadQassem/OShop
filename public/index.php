@@ -72,6 +72,17 @@ $router->map(
     'category-add'
 );
 
+// Réception des données du form d'ajout de catégorie
+$router->map(
+    'POST', //! attention, le form envoie les données avec une requête POST
+    '/category/add', // l'URL
+    [
+        'method' => 'addPost', //! une méthode différente dans le contrôleur, dans laquelle on va réceptionner les données du form (avec $_POST) et ajouter la catégorie à la BDD.
+        'controller' => '\App\Controllers\CategoryController'
+    ],
+    'category-addPost'
+);
+
 // Affichage du form de modification de catégorie
 $router->map(
     'GET',
@@ -81,6 +92,17 @@ $router->map(
         'controller' => '\App\Controllers\CategoryController'
     ],
     'category-update'
+);
+
+// Affichage du form de modification de catégorie
+$router->map(
+    'POST',
+    '/category/update/[i:id]', // l'URL
+    [
+        'method' => 'update',
+        'controller' => '\App\Controllers\CategoryController'
+    ],
+    'category-update-post'
 );
 
 // Liste des produits
@@ -105,6 +127,17 @@ $router->map(
     'product-add'
 );
 
+// réception du form d'ajout de produit
+$router->map(
+    'POST',
+    '/product/add', // l'URL
+    [
+        'method' => 'addPost',
+        'controller' => '\App\Controllers\ProductController'
+    ],
+    'product-addPost'
+);
+
 /* -------------
 --- DISPATCH ---
 --------------*/
@@ -119,5 +152,10 @@ $match = $router->match();
 // 1er argument : la variable $match retournée par AltoRouter
 // 2e argument : le "target" (controller & méthode) pour afficher la page 404
 $dispatcher = new Dispatcher($match, '\App\Controllers\ErrorController::err404');
+
+// on a besoin d'avoir accès à la variable $router un peu partout dans notre code
+// on va donc l'envoyer comme paramètre lors de l'instanciation de nos contrôleurs
+$dispatcher->setControllersArguments($router);
+
 // Une fois le "dispatcher" configuré, on lance le dispatch qui va exécuter la méthode du controller
 $dispatcher->dispatch();
