@@ -4,19 +4,6 @@ namespace App\Controllers;
 
 class CoreController
 {
-
-    // une propriété pour stocker le router (et pouvoir générer des liens avec $router->generate)
-    protected $router;
-
-    // constructeur, méthode appelée automatiquement dès que l'un des contrôleurs est instancié par AltoDispatcher
-    public function __construct($router)
-    {
-        // on récupère le router envoyé en paramètre par AltoDispatcher
-        // et on le stocke dans la propriété privée prévue à cet effet !
-        $this->router = $router;
-    }
-
-
     /**
      * Méthode permettant d'afficher du code HTML en se basant sur les views
      *
@@ -27,7 +14,7 @@ class CoreController
     protected function show(string $viewName, $viewData = [])
     {
         // On globalise $router car on ne sait pas faire mieux pour l'instant
-        //global $router;
+        global $router;
 
         // Comme $viewData est déclarée comme paramètre de la méthode show()
         // les vues y ont accès
@@ -48,11 +35,6 @@ class CoreController
         // => la variable $assetsBaseUri existe désormais, et sa valeur est $_SERVER['BASE_URI'] . '/assets/'
         // => la variable $baseUri existe désormais, et sa valeur est $_SERVER['BASE_URI']
         // => il en va de même pour chaque élément du tableau
-
-        // pour éviter d'avoir à modifier toutes les vues, 
-        // on pourrait faire ça :
-        // Merci Moustoifa AMADI !
-        //$router = $this->router;
 
         // $viewData est disponible dans chaque fichier de vue
         require_once __DIR__ . '/../views/layout/header.tpl.php';

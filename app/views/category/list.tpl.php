@@ -1,5 +1,5 @@
 <div class="container my-4">
-    <a href="<?= $this->router->generate('category-add') ?>" class="btn btn-success float-end">Ajouter</a>
+    <a href="<?= $router->generate('category-add') ?>" class="btn btn-success float-end">Ajouter</a>
     <h2>Liste des catégories</h2>
 
     <table class="table table-hover mt-4">
@@ -20,7 +20,7 @@
                     <td><?= $category->getSubtitle() ?></td>
                     <td><?= $category->getPicture() ?></td>
                     <td class="text-end">
-                        <a href="<?= $this->router->generate('category-update', ['id' => $category->getId()]) ?>" class="btn btn-sm btn-warning">
+                        <a href="<?= $router->generate('category-update', ['id' => $category->getId()]) ?>" class="btn btn-sm btn-warning">
                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                         </a>
                         <!-- Example single danger button -->
