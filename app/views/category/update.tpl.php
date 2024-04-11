@@ -1,5 +1,5 @@
 <div class="container my-4">
-    <a href="<?= $router->generate('category-list') ?>" class="btn btn-success float-end">Retour</a>
+    <a href="<?= $this->router->generate('category-list') ?>" class="btn btn-success float-end">Retour</a>
     <h2>Modifier la catégorie N°<?= $category->getId() ?></h2>
     
     <form action="" method="POST" class="mt-5">

@@ -109,6 +109,50 @@ class Product extends CoreModel
     }
 
     /**
+     * Méthode permettant d'ajouter un enregistrement dans la table product
+     * L'objet courant doit contenir toutes les données à ajouter : 1 propriété => 1 colonne dans la table
+     *
+     * @return bool
+     */
+    public function insert()
+    {
+        // Récupération de l'objet PDO représentant la connexion à la DB
+        $pdo = Database::getPDO();
+
+        // on écrit la requête
+        $sql = "INSERT INTO `product` (name, description, picture, price, rate, status, brand_id, category_id, type_id) 
+                VALUES (:name, :description, :picture, :price, :rate, :status, :brand_id, :category_id, :type_id)";
+
+        // on prépare la requête
+        $stmt = $pdo->prepare($sql);
+
+        // on "bind" (associe) nos paramètres
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':description', $this->description);
+        $stmt->bindParam(':picture', $this->picture);
+        $stmt->bindParam(':price', $this->price);
+        $stmt->bindParam(':rate', $this->rate);
+        $stmt->bindParam(':status', $this->status);
+        $stmt->bindParam(':brand_id', $this->brand_id);
+        $stmt->bindParam(':type_id', $this->type_id);
+        $stmt->bindParam(':category_id', $this->category_id);
+
+        // on lance la requête avec execute()
+        // qui renvoit true si tout s'est bien passé, false sinon !
+        if ($stmt->execute()) {
+            // Alors on récupère l'id auto-incrémenté généré par MySQL
+            $this->id = $pdo->lastInsertId();
+
+            // On retourne VRAI car l'ajout a parfaitement fonctionné
+            return true;
+            // => l'interpréteur PHP sort de cette fonction car on a retourné une donnée
+        }
+
+        // Si on arrive ici, c'est que quelque chose n'a pas bien fonctionné => FAUX
+        return false;
+    }
+
+    /**
      * Get the value of name
      *
      * @return  string
@@ -286,20 +330,5 @@ class Product extends CoreModel
     public function setTypeId(int $type_id)
     {
         $this->type_id = $type_id;
-    }
-
-    public function insert(){
-        $pdo = Database::getPDO();
-
-        $sql = '
-            INSERT INTO category (name, description, picture, price, rate, status, created_at, updated_at, brand_id, category_id, type_id)
-            VALUES '('$this->name').('$this->subtitle').('$this->picture').('$this->home_order').('$this-> created_at').('$this->updated_at')
-           
-        ;
-        $pdoStatement = $pdo->exec($sql);
-
-        $categoriesPost = $pdoStatement->fetchAll(PDO::FETCH_CLASS, 'App\Models\Category');
-
-        return $categoriesPost;
     }
 }
