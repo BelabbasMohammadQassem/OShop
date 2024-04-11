@@ -61,7 +61,7 @@ class ProductController extends CoreController
             // insert() a renvoyé true, on redirige !
             //header('Location: /product/list');
             // c'est mieux avec $router->generate() !
-            header("Location: " + $this->router->generate('product-list'));
+            header("Location: " . $this->router->generate('product-list'));
             exit;
         } else {
             die("Erreur lors de l'ajout d'un produit.");
