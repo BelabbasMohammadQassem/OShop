@@ -152,47 +152,56 @@ class Product extends CoreModel
         return false;
     }
 
-    public function updatePost(){
+    /**
+     * Méthode permettant de mettre à jour un enregistrement dans la table product
+     * L'objet courant doit contenir l'id, et toutes les données à ajouter : 1 propriété => 1 colonne dans la table
+     *
+     * @return bool
+     */
+    public function update()
+    {
         // Récupération de l'objet PDO représentant la connexion à la DB
         $pdo = Database::getPDO();
-// on écrit la requête
-        $sql = "UPDATE `product` (name, description, picture, price, rate, status, brand_id, category_id, type_id) 
-                SET (:name, :description, :picture, :price, :rate, :status, :brand_id, :category_id, :type_id)
-                WHERE 'id' = :id";
+
+        // Ecriture de la requête UPDATE
+        $sql = "
+            UPDATE `product`
+            SET
+                name = :name,
+                description = :description,
+                picture = :picture,
+                price = :price,
+                rate = :rate,
+                status = :status,
+                brand_id = :brand_id,
+                category_id = :category_id,
+                type_id = :type_id,
+                updated_at = NOW()
+            WHERE id = :id
+        ";
+
         // on prépare la requête
-        $updateStmt = $pdo->prepare($sql);
-         // on "bind" (associe) nos paramètres
-         $updateStmt->bindParam(':name', $this->name);
-         $updateStmt->bindParam(':description', $this->description);
-         $updateStmt->bindParam(':picture', $this->picture);
-         $updateStmt->bindParam(':price', $this->price);
-         $updateStmt->bindParam(':rate', $this->rate);
-         $updateStmt->bindParam(':status', $this->status);
-         $updateStmt->bindParam(':brand_id', $this->brand_id);
-         $updateStmt->bindParam(':type_id', $this->type_id);
-         $updateStmt->bindParam(':category_id', $this->category_id);
+        $stmt = $pdo->prepare($sql);
 
+        // on "bind" (associe) nos paramètres
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':description', $this->description);
+        $stmt->bindParam(':picture', $this->picture);
+        $stmt->bindParam(':price', $this->price);
+        $stmt->bindParam(':rate', $this->rate);
+        $stmt->bindParam(':status', $this->status);
+        $stmt->bindParam(':brand_id', $this->brand_id);
+        $stmt->bindParam(':category_id', $this->category_id);
+        $stmt->bindParam(':type_id', $this->type_id);
+        $stmt->bindParam(':id', $this->id);
 
-        // on lance la requête avec execute()
-        // qui renvoit true si tout s'est bien passé, false sinon !
-        if ($updateStmt->execute()) {
-            // Alors on récupère l'id auto-incrémenté généré par MySQL
-            $this->id = $pdo->lastInsertId();
-
-            // On retourne VRAI car l'ajout a parfaitement fonctionné
-            return true;
-            // => l'interpréteur PHP sort de cette fonction car on a retourné une donnée
-        }
-
-
+        // on execute la requête et on renvoit true ou false
+        return $stmt->execute();
     }
 
-
-
-
-
-
-
+    public function delete() {
+        // TODO !
+    }
 
     /**
      * Get the value of name

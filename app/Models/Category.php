@@ -216,33 +216,43 @@ class Category extends CoreModel
         return false;
     }
 
-
-    public function updateCategoryPost(){
+    /**
+     * Méthode permettant de mettre à jour un enregistrement dans la table category
+     * L'objet courant doit contenir l'id, et toutes les données à ajouter : 1 propriété => 1 colonne dans la table
+     *
+     * @return bool
+     */
+    public function update()
+    {
         // Récupération de l'objet PDO représentant la connexion à la DB
         $pdo = Database::getPDO();
-    // on écrit la requête
-        $sql = "UPDATE `category` (name, subtitle, picture) 
-                SET (:name, :subtitle, :picture)
-                WHERE 'id' = :id";
+
+        // Ecriture de la requête UPDATE
+        $sql = "
+            UPDATE `category`
+            SET
+                name = :name,
+                subtitle = :subtitle,
+                picture = :picture,
+                updated_at = NOW()
+            WHERE id = :id
+        ";
+
         // on prépare la requête
-        $updateStmt = $pdo->prepare($sql);
-         // on "bind" (associe) nos paramètres
-         $updateStmt->bindParam(':name', $this->name);
-         $updateStmt->bindParam(':subtitle', $this->subtitle);
-         $updateStmt->bindParam(':picture', $this->picture);
-         
+        $stmt = $pdo->prepare($sql);
 
-        // on lance la requête avec execute()
-        // qui renvoit true si tout s'est bien passé, false sinon !
-        if ($updateStmt->execute()) {
-            // Alors on récupère l'id auto-incrémenté généré par MySQL
-            $this->id = $pdo->lastInsertId();
+        // on "bind" (associe) nos paramètres
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':subtitle', $this->subtitle);
+        $stmt->bindParam(':picture', $this->picture);
+        $stmt->bindParam(':id', $this->id);
 
-            // On retourne VRAI car l'ajout a parfaitement fonctionné
-            return true;
-            // => l'interpréteur PHP sort de cette fonction car on a retourné une donnée
-        }
+
+        // on execute la requête et on renvoit true ou false
+        return $stmt->execute();
     }
 
-
+    public function delete() {
+        // TODO !
+    }
 }

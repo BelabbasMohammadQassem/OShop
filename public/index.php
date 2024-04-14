@@ -12,7 +12,6 @@ require_once '../vendor/autoload.php';
 --- ROUTAGE ---
 -------------*/
 
-
 // création de l'objet router
 // Cet objet va gérer les routes pour nous, et surtout il va
 $router = new AltoRouter();
@@ -94,15 +93,15 @@ $router->map(
     'category-update'
 );
 
-// Affichage du form de modification de catégorie
+// Réception des données du form de modification de catégorie
 $router->map(
     'POST',
     '/category/update/[i:id]', // l'URL
     [
-        'method' => 'update',
+        'method' => 'updatePost',
         'controller' => '\App\Controllers\CategoryController'
     ],
-    'category-update-post'
+    'category-updatePost'
 );
 
 // Liste des produits
@@ -136,6 +135,28 @@ $router->map(
         'controller' => '\App\Controllers\ProductController'
     ],
     'product-addPost'
+);
+
+// Affichage du form de modification de produit
+$router->map(
+    'GET',
+    '/product/update/[i:id]', // l'URL
+    [
+        'method' => 'update',
+        'controller' => '\App\Controllers\ProductController'
+    ],
+    'product-update'
+);
+
+// Réception des données du form de modification de produit
+$router->map(
+    'POST',
+    '/product/update/[i:id]', // l'URL
+    [
+        'method' => 'updatePost',
+        'controller' => '\App\Controllers\ProductController'
+    ],
+    'product-updatePost'
 );
 
 /* -------------

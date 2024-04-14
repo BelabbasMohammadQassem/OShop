@@ -2,8 +2,10 @@
 
 namespace App\Controllers;
 
-use App\Models\Category;
+use App\Models\Type;
+use App\Models\Brand;
 use App\Models\Product;
+use App\Models\Category;
 
 class ProductController extends CoreController
 {
@@ -20,11 +22,19 @@ class ProductController extends CoreController
 
     public function add()
     {
-        // dans le form, on a besoin de la liste des catégories pour remplir le select
-        $categories = Category::findAll();
+        // vu qu'on pré-rempli le form en cas d'erreur, il nous faut un produit vide !
+        $product = new Product();
 
-        $this->show('product/add', [
-            'categories' => $categories
+        // dans le form, on a besoin de la liste des catégories, marques & types pour remplir les selects
+        $categories = Category::findAll();
+        $brands = Brand::findAll();
+        $types = Type::findAll();
+
+        $this->show('product/form', [
+            'product' => $product,
+            'categories' => $categories,
+            'brands' => $brands,
+            'types' => $types
         ]);
     }
 
@@ -74,40 +84,109 @@ class ProductController extends CoreController
         }
     }
 
+    // TODO (bonus) : essayer de faire une seule méthode pour l'affichage et la réception du form
+    //* indice : il faudra arriver à déterminer à l'intérieur si on est en GET, ou en POST !
 
+    // affichage du form de modification de produit
+    public function update($id)
+    {
+        // on récupère le produit à modifier
+        $product = Product::find($id);
 
-      // méthode qui réceptionne le form d'ajout
-      public function UpdateCategoryPost($id)
-      {
-          global $router;
-          //dd($_POST);
-  
-          $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
-          $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
-          $picture = filter_input(INPUT_POST, 'picture', FILTER_SANITIZE_SPECIAL_CHARS);
-          $price = filter_input(INPUT_POST, 'price', FILTER_SANITIZE_SPECIAL_CHARS);
-          $rate = filter_input(INPUT_POST, 'rate', FILTER_SANITIZE_SPECIAL_CHARS);
-          $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
+        // on a également besoin de la liste des catégories, des marques et des types de produit pour remplir les select !
+        $categories = Category::findAll();
+        $brands = Brand::findAll();
+        $types = Type::findAll();
+
+        $this->show('product/form', [
+            'product' => $product,
+            'categories' => $categories,
+            'brands' => $brands,
+            'types' => $types
+        ]);
+    }
+
+    // réception du form de modif de produit
+    public function updatePost($id)
+    {
+        // on récupère les données avec filter_input
+        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
+        $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
+        $picture = filter_input(INPUT_POST, 'picture', FILTER_SANITIZE_SPECIAL_CHARS);
+        $price = filter_input(INPUT_POST, 'price', FILTER_SANITIZE_SPECIAL_CHARS);
+        $rate = filter_input(INPUT_POST, 'rate', FILTER_SANITIZE_SPECIAL_CHARS);
+        $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
+        $brand_id = filter_input(INPUT_POST, 'brand_id', FILTER_SANITIZE_SPECIAL_CHARS);
+        $category_id = filter_input(INPUT_POST, 'category_id', FILTER_SANITIZE_SPECIAL_CHARS);
+        $type_id = filter_input(INPUT_POST, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
+
+        // validation des données du form (vérifier la longueur, vérifier si l'URL de l'image est bien correcte, etc.)
+        // un tableau d'erreurs qui sera renvoyé & affiché sur le formulaire en cas d'erreurs
+        $errors = [];
+
+        if(is_null($name)) {
+            // si name est null, c'est que le champ n'était pas présent
+            //die("Erreur, le champ nom est manquant !");
+
+            // on ajoute le message d'erreur au tableau !
+            $errors[] = "Erreur, le champ nom est manquant !";
+        }
+
+        if(mb_strlen($name) < 3) {
+            // erreur !
+            //die("Le nom doit contenir au moins 3 caractères !");
+
+            // on ajoute le message d'erreur au tableau !
+            $errors[] = "Le nom doit contenir au moins 3 caractères !";
+        }
+
+        // TODO : compléter la validation des données pour le produit
         
-         
-          // TODO : validation des données du form (vérifier la longueur, vérifier si l'URL de l'image est bien correcte, etc.)
-  
-          // on veut ajouter un produit en BDD
-    // pas besoin de creer une methode etant donné qu'on ne veut pas ajouté de donnée
-        $productUpdate = Product::find($id);
+
+        // on veut mettre à jour le produit, donc on le récupère !
+        $product = Product::find($id);
+
         // on remplit notre objet
-         $productUpdate->setName($name);
-        $productUpdate->setDescription($description);
-        $productUpdate->setPicture($picture);
-        $productUpdate->setPrice($price);
-        $productUpdate->setRate($rate);
-        $productUpdate->setStatus($status);
-   
-  $productUpdate->update();
-        
-              // c'est mieux avec $router->generate() !
-              header("Location: " . $this->router->generate('product-list'));
-              exit;
-         
-      }
+        $product->setName($name);
+        $product->setDescription($description);
+        $product->setPicture($picture);
+        $product->setPrice($price);
+        $product->setRate($rate);
+        $product->setStatus($status);
+        $product->setBrandId($brand_id);
+        $product->setTypeId($type_id);
+        $product->setCategoryId($category_id);
+
+        // on vérifie s'il y a eu une erreur ou pas !
+        if(empty($errors)) {
+            // le tableau d'erreur est vide, donc on met à jour en BDD !
+
+            // on demande à notre objet de se mettre à jour en BDD
+            // si l'ajout s'est bien passé, on redirige vers la liste !
+            if($product->update()) {
+                // update() a renvoyé true, on redirige !
+                header("Location: " . $this->router->generate('product-list'));
+                exit;
+            } else {
+                //die("Erreur lors de l'ajout d'une catégorie.");
+                $errors[] = "Erreur lors de la modification du produit.";
+            }
+        }
+
+        // si on arrive à cet endroit là, c'est forcément qu'il y a eu une erreur !
+        // on réaffiche le form de modification de produit, et on lui envoie notre tableau d'erreurs !
+        // on renvoit également l'objet produit pré-rempli avec les données du form, pour que l'utilisateur n'ait pas à tout retaper !
+        // on a également besoin de la liste des catégories, des marques et des types de produit pour remplir les select !
+        $categories = Category::findAll();
+        $brands = Brand::findAll();
+        $types = Type::findAll();
+
+        $this->show('product/form', [
+            'errors' => $errors,
+            'product' => $product,
+            'categories' => $categories,
+            'brands' => $brands,
+            'types' => $types
+        ]);
+    }
 }

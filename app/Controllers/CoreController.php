@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-class CoreController
+abstract class CoreController
 {
 
     // une propriété pour stocker le router (et pouvoir générer des liens avec $router->generate)
@@ -52,7 +52,7 @@ class CoreController
         // pour éviter d'avoir à modifier toutes les vues, 
         // on pourrait faire ça :
         // Merci Moustoifa AMADI !
-        //$router = $this->router;
+        $router = $this->router;
 
         // $viewData est disponible dans chaque fichier de vue
         require_once __DIR__ . '/../views/layout/header.tpl.php';

@@ -4,7 +4,9 @@ namespace App\Models;
 
 // Classe mère de tous les Models
 // On centralise ici toutes les propriétés et méthodes utiles pour TOUS les Models
-class CoreModel
+//! on met la classe CoreModel en "abstract" (classe abstraite en français)
+//! une classe abstraite NE PEUT PAS ÊTRE INSTANCIÉE !
+abstract class CoreModel
 {
     /**
      * @var int
@@ -49,4 +51,13 @@ class CoreModel
     {
         return $this->updated_at;
     }
+
+    //! Maintenant que notre classe est abstraire, on peut lui ajouter des méthodes abstraites !
+    //! les méthodes abstraites permettent juste de déclarer la "signature" de la méthode ! (son nom, si elle est statique ou pas, si elle est public, private ou protected, et les paramètres qu'elle devra pouvoir recevoir)
+    abstract public static function find($id);
+    abstract public static function findAll();
+
+    abstract public function insert();
+    abstract public function update();
+    abstract public function delete();
 }

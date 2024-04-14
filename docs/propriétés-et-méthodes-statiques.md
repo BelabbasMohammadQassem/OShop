@@ -1,6 +1,7 @@
 # Propriétés & méthodes statiques
 
 - **les propriétés & méthodes statiques sont liées à la classe plutôt qu'un objet spécifique**
+- on ne peut pas utiliser `$this` dans une méthode statique !
 - pour définir une méthode statique :
 
 ```php
