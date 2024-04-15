@@ -29,6 +29,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Sélection Accueil</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= $this->router->generate('user-logout') ?>">Log Out</a>
+                </li>
             </ul>
         </div>
     </div>

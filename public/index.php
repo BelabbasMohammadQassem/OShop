@@ -8,6 +8,8 @@
 // mais aussi d'activer le chargement automatique des classes (convention PSR-4)
 require_once '../vendor/autoload.php';
 
+session_start();
+
 /* ------------
 --- ROUTAGE ---
 -------------*/
@@ -157,6 +159,39 @@ $router->map(
         'controller' => '\App\Controllers\ProductController'
     ],
     'product-updatePost'
+);
+
+// affichage du formulaire de connexion
+$router->map(
+    'GET',
+    '/user/login',
+    [
+        'method' => 'login',
+        'controller' => '\App\Controllers\UserController'
+    ],
+    'user-login'
+);
+
+// traitement du formulaire de connexion
+$router->map(
+    'POST',
+    '/user/login',
+    [
+        'method' => 'loginPost',
+        'controller' => '\App\Controllers\UserController'
+    ],
+    'user-login-post'
+);
+
+// déconnection
+$router->map(
+    'GET',
+    '/user/logout',
+    [
+        'method' => 'logout',
+        'controller' => '\App\Controllers\UserController'
+    ],
+    'user-logout'
 );
 
 /* -------------

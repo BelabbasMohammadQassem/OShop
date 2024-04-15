@@ -58,5 +58,41 @@ abstract class CoreController
         require_once __DIR__ . '/../views/layout/header.tpl.php';
         require_once __DIR__ . '/../views/' . $viewName . '.tpl.php';
         require_once __DIR__ . '/../views/layout/footer.tpl.php';
+         header('Location :...');
+    }
+
+    protected function checkAuthorization($roles=[]) {
+        // on récupère le routeur pour générer des URL d'après les routes définies
+        //global $router;
+        // Si le user est connecté
+        if (isset($_SESSION['userId'])) {
+            // Alors on récupère l'utilisateur connecté
+            $currentUser = $_SESSION['userObject'];
+            
+            // Puis on récupère son role
+            $currentUserRole = $currentUser->getRole();
+            
+            // si le role fait partie des roles autorisées (fournis en paramètres)
+            if (in_array($currentUserRole, $roles)) {
+                // Alors on retourne vrai
+                return true;
+            }
+            // Sinon le user connecté n'a pas la permission d'accéder à la page
+            else {
+                // => on envoie le header "403 Forbidden"
+                http_response_code(403);
+                // Puis on affiche la page d'erreur 403
+                //$this->show('error/err403');
+                // Enfin on arrête le script pour que la page demandée ne s'affiche pas
+                exit("Erreur 403");
+            }
+        }
+        // Sinon, l'internaute n'est pas connecté à un compte
+        else {
+            // Alors on le redirige vers la page de connexion
+            $loginPageUrl = $this->router->generate('user-login');
+            header('Location: ' . $loginPageUrl);
+            exit();
+        }
     }
 }

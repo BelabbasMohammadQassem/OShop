@@ -11,6 +11,7 @@ class ProductController extends CoreController
 {
     public function list()
     {
+        $this->checkAuthorization();
         // on a besoin de la liste de produits
         // on la récupère avec la méthode statique findAll() du modèle Product
         $products = Product::findAll();
