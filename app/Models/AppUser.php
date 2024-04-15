@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Utils\Database;
+use PDO;
 
 class AppUser extends CoreModel {
 
@@ -42,6 +43,26 @@ class AppUser extends CoreModel {
     public static function find($userId)
     {
         // pour l'instant, la méthode ne fait rien, on l'implémente juste pour respecter les méthodes abstraites de CoreModel
+        // se connecter à la BDD
+        $pdo = Database::getPDO();
+
+         // écrire notre requête
+         $sql = '
+         SELECT *
+         FROM app_user
+         WHERE id = ' . $userId;
+        
+
+          // exécuter notre requête
+        $pdoStatement = $pdo->query($sql);
+
+           // un seul résultat => fetchObject
+           $result = $pdoStatement->fetchObject('App\Models\AppUser');
+
+             // retourner le résultat
+        return $result;
+
+
     }
 
     /**
@@ -50,6 +71,13 @@ class AppUser extends CoreModel {
     public static function findAll()
     {
         // pour l'instant, la méthode ne fait rien, on l'implémente juste pour respecter les méthodes abstraites de CoreModel
+
+        $pdo = Database::getPDO();
+        $sql = 'SELECT * FROM `app_user`';
+        $pdoStatement = $pdo->query($sql);
+        $results = $pdoStatement->fetchAll(PDO::FETCH_CLASS, 'App\Models\AppUser');
+
+        return $results;
     }
     
     /**
@@ -91,6 +119,27 @@ class AppUser extends CoreModel {
     public function update()
     {
         // pour l'instant, la méthode ne fait rien, on l'implémente juste pour respecter les méthodes abstraites de CoreModel
+        
+      
+            // Récupération de l'objet PDO représentant la connexion à la DB
+            $pdo = Database::getPDO();
+    
+            // Ecriture de la requête UPDATE
+            $sql = "
+                UPDATE `user`
+                SET
+                    name = '{$this->lastname}',
+                    updated_at = NOW()
+                WHERE id = {$this->id}
+            ";
+    
+            // Execution de la requête de mise à jour (exec, pas query)
+            $updatedRows = $pdo->exec($sql);
+    
+            // On retourne VRAI, si au moins une ligne ajoutée
+            return ($updatedRows > 0);
+        
+    
     }
 
     /**

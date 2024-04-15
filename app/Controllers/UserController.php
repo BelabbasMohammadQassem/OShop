@@ -43,7 +43,7 @@ class UserController extends CoreController {
 
             // On affiche un message de joie et d'allégresse
             //echo "OK ! You did it !";
-            header("Location:" . $this->router->generate($_GET['next_page']));
+            header("Location:" . $this->router->generate('main-home'));
             exit();
         }
         // sinon, c'est qu'un mot de passe ne correspondant pas à l'email a été fourni
@@ -59,5 +59,33 @@ class UserController extends CoreController {
         //session_destroy();
         header("Location:" . $this->router->generate('user-login'));
         
+    }
+
+    public function list(){
+        $appUsers = AppUser::findAll();
+
+        //dump($categories);
+
+        // on envoie les données à la vue
+        $this->show('user/list', [
+            'appUsers' => $appUsers
+            
+        ]);
+       $this->checkAuthorization();
+       
+    }
+
+    public function update(){
+        $updateUsers = AppUser::findAll();
+
+        //dump($categories);
+
+        // on envoie les données à la vue
+        $this->show('user/list', [
+            'updateUsers' => $updateUsers
+            
+        ]);
+       $this->checkAuthorization();
+       
     }
 }

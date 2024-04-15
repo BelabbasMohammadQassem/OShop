@@ -30,6 +30,9 @@
                     <a class="nav-link" href="#">Sélection Accueil</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?= ($currentPage === "user/list") ? "active" : "" ?>" href="<?= $this->router->generate('user-list') ?>">User  <?= ($currentPage === "user/list") ? "<span class=\"sr-only\">(current)</span>" : "" ?></a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="<?= $this->router->generate('user-logout') ?>">Log Out</a>
                 </li>
             </ul>

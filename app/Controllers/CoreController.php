@@ -61,7 +61,7 @@ abstract class CoreController
          header('Location :...');
     }
 
-    protected function checkAuthorization($roles=[]) {
+    protected function checkAuthorization($roles=['admin']) {
         // on récupère le routeur pour générer des URL d'après les routes définies
         //global $router;
         // Si le user est connecté
@@ -76,13 +76,13 @@ abstract class CoreController
             if (in_array($currentUserRole, $roles)) {
                 // Alors on retourne vrai
                 return true;
-            }
+            } 
             // Sinon le user connecté n'a pas la permission d'accéder à la page
             else {
                 // => on envoie le header "403 Forbidden"
                 http_response_code(403);
                 // Puis on affiche la page d'erreur 403
-                //$this->show('error/err403');
+                $this->show('error/err403');
                 // Enfin on arrête le script pour que la page demandée ne s'affiche pas
                 exit("Erreur 403");
             }
