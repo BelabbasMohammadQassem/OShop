@@ -11,9 +11,70 @@ abstract class CoreController
     // constructeur, méthode appelée automatiquement dès que l'un des contrôleurs est instancié par AltoDispatcher
     public function __construct($router)
     {
+        $this->router = $router;
+        // La variable $match contient les infos sur la route courante
+        global $match;
+
+        $routeName = $match['name'];
+
+        // On définit la liste des permissions pour les routes nécessitant une connexion utilisateur
+        $acl = [
+            'main-home' => ['admin', 'catalog-manager'], //=> pas besoin, la route est libre d'accès
+            // 'user-signin' => [], => pas besoin, la route est libre d'accès
+            'user-add' => ['admin'],
+            'user-add-post' => ['admin'],
+            'category-add' => ['admin', 'catalog-manager'],
+            'category-add-post' => ['admin', 'catalog-manager'],
+            'category-list' => ['admin', 'catalog-manager'],
+            'category-edit' => ['admin', 'catalog-manager'],
+            'category-edit-post' => ['admin', 'catalog-manager'],
+            'category-delete' => ['admin', 'catalog-manager'],
+            // etc.
+        ];
+
+        // Si la route actuelle est dans la liste des ACL
+        if (array_key_exists($routeName, $acl)) {
+            // Alors on récupère le tableau des roles autorisés
+            $authorizedRoles = $acl[$routeName];
+
+            // Puis on utilie la méthode checkAuthorization($roles) pour vérifier les permissions
+            $this->checkAuthorization($authorizedRoles);
+        }
+        // Sinon, on ne fait rien, on laisse la suite du script se faire (afficher)
+
+        $csrfTokenToCheckInPost = [
+            'user-add-post',
+            /*'category-add-post',
+            'category-edit-post'*/
+            // etc.
+        ];
+        // Ajout check token anti-CSRF en GET
+        $csrfTokenToCheckInGet = [
+            'user-add'
+            // etc.
+        ];
+        //Requête GET (pour passer le tojen au formulaire lors de sa création)
+       if(in_array($routeName, $csrfTokenToCheckInGet)){
+            $token = bin2hex(random_bytes(32));
+            $_SESSION['token'] = $token;
+        }
+        //Requête POST
+        elseif(in_array($routeName, $csrfTokenToCheckInPost)){
+            $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_SPECIAL_CHARS);
+            $token = isset($_POST['token']) ? $_POST['token'] : '';
+            $sessionToken = isset($_SESSION['token']) ? $_SESSION['token']: '';
+            if($token !== $sessionToken || empty($token)){
+                http_response_code(403);
+                exit("Erreur 403");
+            }
+            else{
+                unset($_SESSION['token']);
+            }
+        }
+        
         // on récupère le router envoyé en paramètre par AltoDispatcher
         // et on le stocke dans la propriété privée prévue à cet effet !
-        $this->router = $router;
+        
     }
 
 
@@ -58,10 +119,9 @@ abstract class CoreController
         require_once __DIR__ . '/../views/layout/header.tpl.php';
         require_once __DIR__ . '/../views/' . $viewName . '.tpl.php';
         require_once __DIR__ . '/../views/layout/footer.tpl.php';
-         header('Location :...');
     }
 
-    protected function checkAuthorization($roles=['admin']) {
+    protected function checkAuthorization($roles=[]) {
         // on récupère le routeur pour générer des URL d'après les routes définies
         //global $router;
         // Si le user est connecté
@@ -76,13 +136,13 @@ abstract class CoreController
             if (in_array($currentUserRole, $roles)) {
                 // Alors on retourne vrai
                 return true;
-            } 
+            }
             // Sinon le user connecté n'a pas la permission d'accéder à la page
             else {
                 // => on envoie le header "403 Forbidden"
                 http_response_code(403);
                 // Puis on affiche la page d'erreur 403
-                $this->show('error/err403');
+                //$this->show('error/err403');
                 // Enfin on arrête le script pour que la page demandée ne s'affiche pas
                 exit("Erreur 403");
             }

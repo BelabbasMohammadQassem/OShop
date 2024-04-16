@@ -194,47 +194,36 @@ $router->map(
     'user-logout'
 );
 
-// Liste des catégories
+// Liste des utilisateurs
 $router->map(
     'GET',
-    '/user/list', // l'URL
+    '/user/list',
     [
         'method' => 'list',
         'controller' => '\App\Controllers\UserController'
     ],
     'user-list'
 );
-
-$router->map(
-    'POST',
-    '/user/list', // l'URL
-    [
-        'method' => 'list',
-        'controller' => '\App\Controllers\UserController'
-    ],
-    'user-list-post'
-);
-
-// Affichage du form de modification de catégorie
+// formulaire d'ajout d'un utilisateur
 $router->map(
     'GET',
-    '/user/update/[i:id]', // l'URL
+    '/user/add',
     [
-        'method' => 'update',
+        'method' => 'add',
         'controller' => '\App\Controllers\UserController'
     ],
-    'user-update'
+    'user-add'
 );
 
-// Réception des données du form de modification de catégorie
+// traitement de l'ajout d'un utilisateur
 $router->map(
     'POST',
-    '/user/update/[i:id]', // l'URL
+    '/user/add',
     [
-        'method' => 'updatePost',
+        'method' => 'addPost',
         'controller' => '\App\Controllers\UserController'
     ],
-    'user-update-post'
+    'user-add-post'
 );
 
 /* -------------

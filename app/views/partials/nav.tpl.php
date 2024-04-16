@@ -18,6 +18,9 @@
                     <a class="nav-link <?= ($currentPage === "product/list") ? "active" : "" ?>" href="<?= $this->router->generate('product-list') ?>">Produits  <?= ($currentPage === "product/list") ? "<span class=\"sr-only\">(current)</span>" : "" ?></a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link <?= ($currentPage === "user/list") ? "active" : "" ?>" href="<?= $this->router->generate('user-list') ?>">Liste utilisateurs  <?= ($currentPage === "user/list") ? "<span class=\"sr-only\">(current)</span>" : "" ?></a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#">Types</a>
                 </li>
                 <li class="nav-item">
@@ -28,9 +31,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Sélection Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= ($currentPage === "user/list") ? "active" : "" ?>" href="<?= $this->router->generate('user-list') ?>">User  <?= ($currentPage === "user/list") ? "<span class=\"sr-only\">(current)</span>" : "" ?></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?= $this->router->generate('user-logout') ?>">Log Out</a>

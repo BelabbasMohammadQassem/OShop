@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Utils\Database;
-use PDO;
 
 class AppUser extends CoreModel {
 
@@ -43,26 +42,6 @@ class AppUser extends CoreModel {
     public static function find($userId)
     {
         // pour l'instant, la méthode ne fait rien, on l'implémente juste pour respecter les méthodes abstraites de CoreModel
-        // se connecter à la BDD
-        $pdo = Database::getPDO();
-
-         // écrire notre requête
-         $sql = '
-         SELECT *
-         FROM app_user
-         WHERE id = ' . $userId;
-        
-
-          // exécuter notre requête
-        $pdoStatement = $pdo->query($sql);
-
-           // un seul résultat => fetchObject
-           $result = $pdoStatement->fetchObject('App\Models\AppUser');
-
-             // retourner le résultat
-        return $result;
-
-
     }
 
     /**
@@ -70,14 +49,21 @@ class AppUser extends CoreModel {
      */
     public static function findAll()
     {
-        // pour l'instant, la méthode ne fait rien, on l'implémente juste pour respecter les méthodes abstraites de CoreModel
-
+        // récupération de la connexion à la BDD => objet PDO
         $pdo = Database::getPDO();
-        $sql = 'SELECT * FROM `app_user`';
-        $pdoStatement = $pdo->query($sql);
-        $results = $pdoStatement->fetchAll(PDO::FETCH_CLASS, 'App\Models\AppUser');
 
-        return $results;
+        // requête SQL
+        $sql = '
+        SELECT * FROM app_user';
+
+        // on utilise query() pour récupérer les données simplement
+        $pdoStatement = $pdo->query($sql);
+
+        // on récupère le résultat sous la forme d'un array d'objets de la classe AppUser
+        $result = $pdoStatement->fetchAll(\PDO::FETCH_CLASS, 'App\Models\AppUser');
+        
+        // on renvoie le résultat
+        return $result;
     }
     
     /**
@@ -106,40 +92,11 @@ class AppUser extends CoreModel {
     }
 
     /**
-     * Méthode permettant la création du model en base
-     */
-    public function insert()
-    {
-        // pour l'instant, la méthode ne fait rien, on l'implémente juste pour respecter les méthodes abstraites de CoreModel
-    }
-
-    /**
      * Méthode permettant la mise à jour du model en base
      */
     public function update()
     {
         // pour l'instant, la méthode ne fait rien, on l'implémente juste pour respecter les méthodes abstraites de CoreModel
-        
-      
-            // Récupération de l'objet PDO représentant la connexion à la DB
-            $pdo = Database::getPDO();
-    
-            // Ecriture de la requête UPDATE
-            $sql = "
-                UPDATE `user`
-                SET
-                    name = '{$this->lastname}',
-                    updated_at = NOW()
-                WHERE id = {$this->id}
-            ";
-    
-            // Execution de la requête de mise à jour (exec, pas query)
-            $updatedRows = $pdo->exec($sql);
-    
-            // On retourne VRAI, si au moins une ligne ajoutée
-            return ($updatedRows > 0);
-        
-    
     }
 
     /**
@@ -271,5 +228,53 @@ class AppUser extends CoreModel {
     public function setStatus(int $status)
     {
         $this->status = $status;
+    }
+
+     /**
+     * Méthode permettant la création du model en base
+     */
+    public function insert()
+    {
+        // récupération de la connexion à la BDD => objet PDO
+        $pdo = Database::getPDO();
+
+        // préparer la requête
+        $sql = "
+        INSERT INTO `app_user` (
+            `email`,
+            `password`,
+            `firstname`,
+            `lastname`, 
+            `role`,
+            `status`
+        ) 
+        VALUES (
+            :email,
+            :password,
+            :firstname,
+            :lastname,
+            :role,
+            :status
+        )";
+
+        $pdoStatement = $pdo->prepare($sql);
+
+        // exécuter la requête
+        $success = $pdoStatement->execute([
+            ':email' => $this->email,
+            ':password' => $this->password,
+            ':firstname' => $this->firstname,
+            ':lastname' => $this->lastname,
+            ':role' => $this->role,
+            ':status' => $this->status
+        ]);
+
+        // mettre à jour l'id du model
+        if ($success) {
+            $this->id = $pdo->lastInsertId();
+        }
+
+        // ne pas oublier de retourner le succes de l'opération
+        return $success;
     }
 }
