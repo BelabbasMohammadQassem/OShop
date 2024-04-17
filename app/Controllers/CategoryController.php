@@ -21,7 +21,8 @@ class CategoryController extends CoreController
 
         // on envoie les données à la vue
         $this->show('category/list', [
-            'categories' => $categories
+            'categories' => $categories, 
+            'csrfToken' => $_SESSION['token']
         ]);
     }
 
@@ -31,7 +32,8 @@ class CategoryController extends CoreController
         $category = new Category();
 
         $this->show('category/add', [
-            "category" => $category
+            "category" => $category, 
+            'csrfToken' => $_SESSION['token']
         ]);
     }
 
@@ -193,5 +195,31 @@ class CategoryController extends CoreController
             die("Erreur lors de la modification de la catégorie.");
         }
         
+    }
+    /**
+     *  
+     *
+     * @return void
+     */
+    public function selectFavourite(){
+        
+        $allCategories = Category::findAll();
+        $this->show('category/selectFavouriteCategory', [
+            'listCategories'=>$allCategories, 
+            'csrfToken'=> $_SESSION['token']
+        ]);
+    }
+
+    public function selectFavouritePost(){
+        $homeOrders = (filter_input_array(INPUT_POST))['emplacement'];
+        Category::updateAllHomepage($homeOrders);
+        header("Location: " . $this->router->generate('main-home'));
+        exit();
+    }
+    public function delete($id){
+        $category = new Category($id);
+        $category->delete();
+        header("Location: " . $this->router->generate('category-list'));
+        exit();
     }
 }

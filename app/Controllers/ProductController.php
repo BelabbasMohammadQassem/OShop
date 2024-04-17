@@ -6,12 +6,12 @@ use App\Models\Type;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Tag;
 
 class ProductController extends CoreController
 {
     public function list()
     {
-        $this->checkAuthorization();
         // on a besoin de la liste de produits
         // on la récupère avec la méthode statique findAll() du modèle Product
         $products = Product::findAll();
@@ -99,12 +99,62 @@ class ProductController extends CoreController
         $brands = Brand::findAll();
         $types = Type::findAll();
 
+        $productTags = Tag::findAllByProductId($id);
+
         $this->show('product/form', [
             'product' => $product,
             'categories' => $categories,
             'brands' => $brands,
-            'types' => $types
+            'types' => $types,
+            'productTags' => $productTags,
         ]);
+    }
+
+    /**
+     * Crée une association entre un tag  et un produit
+     */
+    public function addTag()
+    {
+        $tagId = filter_input(INPUT_POST, 'tag_id', FILTER_VALIDATE_INT);
+        $productId = filter_input(INPUT_POST, 'product_id', FILTER_VALIDATE_INT);
+
+        //!on ne peux ajouter un tag à un produit que si un $tagId et un $productId sont définis
+        if($tagId && $productId) {
+            //!récupération du tag grace à son id
+            $tag = Tag::find($tagId);
+
+            //!on ajoute le tag au produit demandé
+            if($tag->addToProduct($productId)) {
+                //!on redirige sur la page d'édition du produit si tout s'est bien passé
+                global $router;
+                header('Location: ' . $router->generate('product-update', ['id' => $productId]));
+            }
+        }
+        
+        //!s'il y a une erreur, il faudrait afficher un message adéquat
+        echo 'ERREUR AJOUT TAG A UN PRODUIT';
+        echo __FILE__.':'.__LINE__; exit();
+    }
+
+    /**
+     * Retire l'association d'un tag pour un produit
+     */
+    public function removeTag($productId, $tagId)
+    {
+        if($tagId) {
+            //!on récupère le tag dans la couche modèle
+            $tag = Tag::find($tagId);
+            if($tag->removeFromProduct($productId)) {
+                //!si la suppression du tag pour le produit demandé s'est bien passé, on redirige sur la page d'édition
+                global $router;
+                header('Location: ' . $router->generate('product-update', ['id' => $productId]));
+                exit();
+            }
+        }
+
+        //!il faudrait afficher un message d'erreur ici
+        echo 'ERREUR SUPPRESION TAG D\'UN PRODUIT';
+        echo __FILE__.':'.__LINE__; exit();
     }
 
     // réception du form de modif de produit
@@ -120,6 +170,7 @@ class ProductController extends CoreController
         $brand_id = filter_input(INPUT_POST, 'brand_id', FILTER_SANITIZE_SPECIAL_CHARS);
         $category_id = filter_input(INPUT_POST, 'category_id', FILTER_SANITIZE_SPECIAL_CHARS);
         $type_id = filter_input(INPUT_POST, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
+        //$productTags = filter_input(INPUT_POST, 'type_id', FILTER_SANITIZE_SPECIAL_CHARS);
 
         // validation des données du form (vérifier la longueur, vérifier si l'URL de l'image est bien correcte, etc.)
         // un tableau d'erreurs qui sera renvoyé & affiché sur le formulaire en cas d'erreurs

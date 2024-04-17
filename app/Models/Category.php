@@ -169,6 +169,22 @@ class Category extends CoreModel
         return $categories;
     }
 
+    public static function updateAllHomepage($listCategories){
+
+        $pdo = Database::getPDO();
+        //On remets l'ordre des toutes les catégories à 0 puis on update les 5 catégories du formulaire (avec une requête préparé)
+        $sql = 'Update category set home_order=0 Where 1; Update category set home_order=1 Where id=:id_category1; Update category set home_order=2 Where id=:id_category2; Update category set home_order=3 Where id=:id_category3; Update category set home_order=4 Where id=:id_category4; Update category set home_order=5 Where id=:id_category5';
+        $req = $pdo->prepare($sql); 
+        //On donne toutes les id de catégories provenant du formulaire (dans l'ordre correspondant à home_order)
+        $req->execute([
+            'id_category1'=> $listCategories[0], 
+            'id_category2'=> $listCategories[1], 
+            'id_category3'=> $listCategories[2], 
+            'id_category4'=> $listCategories[3], 
+            'id_category5'=> $listCategories[4], 
+        ]);
+    }
+
     /**
      * Méthode permettant d'ajouter un enregistrement dans la table category
      * L'objet courant doit contenir toutes les données à ajouter : 1 propriété => 1 colonne dans la table
@@ -252,7 +268,19 @@ class Category extends CoreModel
         return $stmt->execute();
     }
 
-    public function delete() {
-        // TODO !
+    public function delete()
+    {
+        // Récupération de l'objet PDO représentant la connexion à la DB
+        $pdo = Database::getPDO();
+
+
+        $sql = "DELETE FROM category WHERE id = {$this->id}";
+
+
+        $delete = $pdo->exec($sql);
+
+
+        return $delete;
     }
+
 }

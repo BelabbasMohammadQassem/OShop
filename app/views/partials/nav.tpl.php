@@ -20,6 +20,7 @@
                 <li class="nav-item">
                     <a class="nav-link <?= ($currentPage === "user/list") ? "active" : "" ?>" href="<?= $this->router->generate('user-list') ?>">Liste utilisateurs  <?= ($currentPage === "user/list") ? "<span class=\"sr-only\">(current)</span>" : "" ?></a>
                 </li>
+            
                 <li class="nav-item">
                     <a class="nav-link" href="#">Types</a>
                 </li>
@@ -30,7 +31,7 @@
                     <a class="nav-link" href="#">Tags</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Sélection Accueil</a>
+                    <a class="nav-link <?= ($currentPage === "category/selectFavourite") ? "active" : "" ?>" href="<?= $this->router->generate('category-favourite') ?>">Sélection accueil  <?= ($currentPage === "category/selectFavourite") ? "<span class=\"sr-only\">(current)</span>" : "" ?></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?= $this->router->generate('user-logout') ?>">Log Out</a>

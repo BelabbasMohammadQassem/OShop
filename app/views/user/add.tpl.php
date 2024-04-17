@@ -24,7 +24,7 @@
             <label for="lirstName">LastName</label>
             <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Nom de famille" aria-describedby="pictureHelpBlock">
         </div>
-        <input type="hidden" name="token" value="<?= $csrfToken ?>">
+        
         <div class="form-group">
             <label for="role-select">Choisissez un role:</label>
             <select name="role" id="role-select">
@@ -42,7 +42,7 @@
                 <option value="2">Désactivé</option>
             </select>
         </div>
-
+        <input type="hidden" name="token" value="<?= $csrfToken ?>">
         <button type="submit" class="btn btn-primary btn-block mt-5">Valider</button>
     </form>
 </div>

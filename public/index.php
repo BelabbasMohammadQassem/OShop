@@ -106,6 +106,37 @@ $router->map(
     'category-updatePost'
 );
 
+$router->map(
+    'GET', 
+    '/category/selectFavourite', 
+    [
+        'method'=>'selectFavourite', 
+        'controller' =>'\App\Controllers\CategoryController'
+    ],
+    'category-favourite'
+);
+
+$router->map(
+    'POST', 
+    '/category/selectFavourite', 
+    [
+        'method'=>'selectFavouritePost', 
+        'controller' =>'\App\Controllers\CategoryController'
+    ],
+    'category-favourite-post'
+);
+
+// Affichage du form d'ajout de catégorie
+$router->map(
+    'GET',
+    '/category/delete/[i:id]', // l'URL
+    [
+        'method' => 'delete',
+        'controller' => '\App\Controllers\CategoryController'
+    ],
+    'category-delete'
+);
+
 // Liste des produits
 $router->map(
     'GET',

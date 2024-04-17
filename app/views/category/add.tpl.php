@@ -28,6 +28,7 @@
             </small>
         </div>
         <div class="d-grid gap-2">
+            <input type="hidden" name="token" value="<?= $csrfToken ?>">
             <button type="submit" class="btn btn-primary mt-5">Valider</button>
         </div>
     </form>

@@ -16,11 +16,12 @@ abstract class CoreController
         global $match;
 
         $routeName = $match['name'];
-
         // On définit la liste des permissions pour les routes nécessitant une connexion utilisateur
         $acl = [
             'main-home' => ['admin', 'catalog-manager'], //=> pas besoin, la route est libre d'accès
             // 'user-signin' => [], => pas besoin, la route est libre d'accès
+            'category-selectHomeOrder' => ['admin', 'catalog-manager'],
+            'category-selectHomeOrderPost' => ['admin', 'catalog-manager'],
             'user-add' => ['admin'],
             'user-add-post' => ['admin'],
             'category-add' => ['admin', 'catalog-manager'],
@@ -29,6 +30,9 @@ abstract class CoreController
             'category-edit' => ['admin', 'catalog-manager'],
             'category-edit-post' => ['admin', 'catalog-manager'],
             'category-delete' => ['admin', 'catalog-manager'],
+            'product-list' => ['admin', 'catalog-manager'], 
+            'product-update' => ['admin', 'catalog-manager'],
+            'product-updatePost' => ['admin']
             // etc.
         ];
 
@@ -44,24 +48,38 @@ abstract class CoreController
 
         $csrfTokenToCheckInPost = [
             'user-add-post',
+            'category-selectHomeOrderPost', 
+            'category-addPost', 
+            'category-delete', 
+            'nouveauFormulairePost'
             /*'category-add-post',
-            'category-edit-post'*/
+            'category-edit-post'*/  
             // etc.
         ];
         // Ajout check token anti-CSRF en GET
         $csrfTokenToCheckInGet = [
-            'user-add'
+            'user-add',
+            'category-selectHomeOrder', 
+            'category-add', 
+            'category-list', 
+            'category-favourite', 
+            'nouveauFormulaire'
             // etc.
         ];
         //Requête GET (pour passer le tojen au formulaire lors de sa création)
        if(in_array($routeName, $csrfTokenToCheckInGet)){
-            $token = bin2hex(random_bytes(32));
-            $_SESSION['token'] = $token;
+            $_SESSION['token'] = bin2hex(random_bytes(32));
         }
         //Requête POST
         elseif(in_array($routeName, $csrfTokenToCheckInPost)){
             $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_SPECIAL_CHARS);
-            $token = isset($_POST['token']) ? $_POST['token'] : '';
+            $token =  "";
+            if(isset($_POST['token'])){
+                $token = $_POST['token'];
+            }
+            elseif(isset($_GET['token'])){
+                $token = $_GET['token'];
+            }
             $sessionToken = isset($_SESSION['token']) ? $_SESSION['token']: '';
             if($token !== $sessionToken || empty($token)){
                 http_response_code(403);
@@ -144,7 +162,7 @@ abstract class CoreController
                 // Puis on affiche la page d'erreur 403
                 //$this->show('error/err403');
                 // Enfin on arrête le script pour que la page demandée ne s'affiche pas
-                exit("Erreur 403");
+                exit("Erreur 403 right  ");
             }
         }
         // Sinon, l'internaute n'est pas connecté à un compte

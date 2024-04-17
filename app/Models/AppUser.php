@@ -257,6 +257,7 @@ class AppUser extends CoreModel {
             :status
         )";
 
+
         $pdoStatement = $pdo->prepare($sql);
 
         // exécuter la requête
